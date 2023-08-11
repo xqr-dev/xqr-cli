@@ -39,6 +39,16 @@ fn cli() -> Command {
                 .arg(arg!(jwt: [JWT] "The JWT to decode"))
                 .arg_required_else_help(true),
         )
+        .subcommand(
+            Command::new("generate-key-pair")
+                .about("Generate a new ECDSA (ES256) key pair for use with XQR codes")
+                .arg(
+                    arg!(save: --save <SAVE_PATH> "Save the key pair to a file")
+                        .value_parser(value_parser!(PathBuf))
+                        .required(true),
+                )
+                .arg_required_else_help(true),
+        )
 }
 
 fn main() {
@@ -120,6 +130,40 @@ fn main() {
                 Ok(decoded_value) => println!("{}", decoded_value),
                 Err(e) => {
                     eprintln!("Error decoding: {}", e);
+                    std::process::exit(1);
+                }
+            }
+        }
+        Some(("generate-key-pair", sub_matches)) => {
+            let save_path = sub_matches.get_one::<PathBuf>("save").unwrap();
+            let pub_key_path = save_path.with_extension("pub");
+            let key_pair = xqr::generate_key_pair();
+            let private_key_pem = match key_pair.to_pem() {
+                Ok(private_key_pem) => private_key_pem,
+                Err(e) => {
+                    eprintln!("Error generating private key: {}", e);
+                    std::process::exit(1);
+                }
+            };
+            let pub_key_pem = match key_pair.public_key().to_pem() {
+                Ok(pub_key_pem) => pub_key_pem,
+                Err(e) => {
+                    eprintln!("Error generating public key: {}", e);
+                    std::process::exit(1);
+                }
+            };
+
+            match std::fs::write(save_path, private_key_pem) {
+                Ok(_) => println!("Saved private key to {}", save_path.display()),
+                Err(e) => {
+                    eprintln!("Error saving private key: {}", e);
+                    std::process::exit(1);
+                }
+            }
+            match std::fs::write(pub_key_path.clone(), pub_key_pem) {
+                Ok(_) => println!("Saved public key to {}", pub_key_path.display()),
+                Err(e) => {
+                    eprintln!("Error saving public key: {}", e);
                     std::process::exit(1);
                 }
             }
