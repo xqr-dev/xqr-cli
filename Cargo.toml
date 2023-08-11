@@ -9,10 +9,16 @@ readme = "README.md"
 license = "GPL-3.0-only"
 keywords = ["secure", "qr", "code", "cli"]
 
+# Change the name of the output binary to simply "xqr"
+[[bin]]
+name = "xqr"
+path = "src/main.rs"
+
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
 clap = "4.3.21"
 qrcode = "0.12.0"
-image = "0.24.7"
+image = "0.23.14"  # can't upgrade to 0.24.x because qrcode doesn't support it yet
 xqr = "0.2.0"
+qr2term = "0.3.1"

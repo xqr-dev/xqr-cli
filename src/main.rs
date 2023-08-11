@@ -1,5 +1,7 @@
 extern crate clap;
-use clap::{arg, value_parser, Command};
+use clap::{arg, value_parser, Arg, ArgAction, Command};
+use image::Luma;
+use qrcode::QrCode;
 use std::path::PathBuf;
 
 fn cli() -> Command {
@@ -17,6 +19,18 @@ fn cli() -> Command {
                         .required(true),
                 )
                 .arg(arg!(kid: --kid <KID> "The key ID to use").required(true))
+                .arg(
+                    Arg::new("display")
+                        .long("display")
+                        .help("Display the QR code in the terminal")
+                        .action(ArgAction::SetTrue)
+                        .conflicts_with("save"),
+                )
+                .arg(
+                    arg!(save: --save <SAVE_PATH> "Save the QR code to a file")
+                        .value_parser(value_parser!(PathBuf))
+                        .conflicts_with("display"),
+                )
                 .arg_required_else_help(true),
         )
         .subcommand(
@@ -42,8 +56,40 @@ fn main() {
             };
             let value = sub_matches.get_one::<String>("value").unwrap();
             let kid = sub_matches.get_one::<String>("kid").unwrap();
+
             match xqr::encode(&priv_key, value, kid) {
-                Ok(encoded_xqr) => println!("{}", encoded_xqr.token),
+                Ok(encoded_xqr) => {
+                    if sub_matches.get_flag("display") {
+                        match qr2term::print_qr(&encoded_xqr.token) {
+                            Ok(_) => {}
+                            Err(e) => {
+                                eprintln!("Error displaying QR code: {}", e);
+                                std::process::exit(1);
+                            }
+                        }
+                    } else {
+                        match sub_matches.get_one::<PathBuf>("save") {
+                            Some(save_path) => {
+                                let code = match QrCode::new(encoded_xqr.token) {
+                                    Ok(code) => code,
+                                    Err(e) => {
+                                        eprintln!("Error creating QR code: {}", e);
+                                        std::process::exit(1);
+                                    }
+                                };
+                                let image = code.render::<Luma<u8>>().build();
+                                match image.save(save_path) {
+                                    Ok(_) => println!("Saved QR code to {}", save_path.display()),
+                                    Err(e) => {
+                                        eprintln!("Error saving QR code: {}", e);
+                                        std::process::exit(1);
+                                    }
+                                }
+                            }
+                            None => println!("{}", encoded_xqr.token),
+                        }
+                    }
+                }
                 Err(e) => {
                     eprintln!("Error encoding: {}", e);
                     std::process::exit(1);
