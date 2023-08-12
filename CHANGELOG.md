@@ -10,6 +10,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Add `--valid-for` argument to `xqr encode` to set how long the token is valid for
   - When not set, the XQR will be valid forever
+- Add `--iss` argument and pass to `xqr encode` to set the issuer
+
+### Changed
+- Upgrade `xqr` to `0.4.0` (breaking changes)
+
+### Removed
+- Remove `--kid` argument from `xqr encode`
+  - The key id is now generated from the key
 
 ## [0.1.0] - 2022-08-11
 ### Added
