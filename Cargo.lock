@@ -2127,9 +2127,9 @@ dependencies = [
 
 [[package]]
 name = "xqr"
-version = "0.2.0"
+version = "0.3.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "de62e54370cd223581589d6826ffc522b304580ebf82036babdbf66320f53e36"
+checksum = "1087025c0fef387e3e0f57f7dff1b0d97950ff11fb7dbd5b5483ec72987cc604"
 dependencies = [
  "jwt-simple",
  "reqwest",
@@ -2143,6 +2143,7 @@ name = "xqr-cli"
 version = "0.1.0"
 dependencies = [
  "clap",
+ "coarsetime",
  "image",
  "qr2term",
  "qrcode",

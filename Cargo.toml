@@ -20,5 +20,6 @@ path = "src/main.rs"
 clap = "4.3.21"
 qrcode = "0.12.0"
 image = "0.23.14"  # can't upgrade to 0.24.x because qrcode doesn't support it yet
-xqr = "0.2.0"
+xqr = "0.3.0"
 qr2term = "0.3.1"
+coarsetime = "0.1.23"

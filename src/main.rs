@@ -1,7 +1,10 @@
 extern crate clap;
+
 use clap::{arg, value_parser, Arg, ArgAction, Command};
+use coarsetime::Duration;
 use image::Luma;
 use qrcode::QrCode;
+use std::num::ParseIntError;
 use std::path::PathBuf;
 
 fn cli() -> Command {
@@ -30,6 +33,10 @@ fn cli() -> Command {
                     arg!(save: --save <SAVE_PATH> "Save the QR code to a file")
                         .value_parser(value_parser!(PathBuf))
                         .conflicts_with("display"),
+                )
+                .arg(
+                    arg!(valid_for: --"valid-for" <VALID_FOR> "How long the XQR is valid for in seconds, if not set the XQR will be valid forever")
+                        .value_parser(|s: &str|-> Result<Duration, ParseIntError> { Ok(Duration::from_secs(s.parse()?)) })
                 )
                 .arg_required_else_help(true),
         )
@@ -66,8 +73,9 @@ fn main() {
             };
             let value = sub_matches.get_one::<String>("value").unwrap();
             let kid = sub_matches.get_one::<String>("kid").unwrap();
+            let valid_for = sub_matches.get_one::<Duration>("valid_for");
 
-            match xqr::encode(&priv_key, value, kid) {
+            match xqr::encode(&priv_key, value, kid, valid_for.copied()) {
                 Ok(encoded_xqr) => {
                     if sub_matches.get_flag("display") {
                         match qr2term::print_qr(&encoded_xqr.token) {

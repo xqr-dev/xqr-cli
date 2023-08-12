@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- Add `--valid-for` argument to `xqr encode` to set how long the token is valid for
+  - When not set, the XQR will be valid forever
+
 ## [0.1.0] - 2022-08-11
 ### Added
 - `xqr encode` command

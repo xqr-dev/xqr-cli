@@ -34,6 +34,7 @@ Options:
       --kid <KID>                  The key ID to use
       --display                    Display the QR code in the terminal
       --save <SAVE_PATH>           Save the QR code to a file
+      --valid-for <VALID_FOR>      How long the XQR is valid for in seconds, if not set the XQR will be valid forever
   -h, --help                       Print help
 ```
 
