@@ -24,14 +24,14 @@ Options:
 ```
 Encode a value into a JWT and optionally into a QR code
 
-Usage: xqr encode [OPTIONS] --private-key <PRIVATE_KEY> --kid <KID> [VALUE]
+Usage: xqr encode [OPTIONS] --private-key <PRIVATE_KEY> --iss <ISS> [VALUE]
 
 Arguments:
   [VALUE]  The value to encode
 
 Options:
       --private-key <PRIVATE_KEY>
-      --kid <KID>                  The key ID to use
+      --iss <ISS>                  The issuer to use
       --display                    Display the QR code in the terminal
       --save <SAVE_PATH>           Save the QR code to a file
       --valid-for <VALID_FOR>      How long the XQR is valid for in seconds, if not set the XQR will be valid forever
